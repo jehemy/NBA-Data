@@ -1,0 +1,37 @@
+---
+title: "NBA Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+setwd("U:/experimenting/R/NBA")
+library(rjson)
+library(tidyverse)
+library(ballr)
+```
+
+```{r nbastatsjson, include=FALSE}
+nbacall <- fromJSON(file = "http://data.nba.net/10s/prod/v1/today.json")
+print(nbacall)
+```
+
+```{r scrape csv}
+seasons <- c(2017:2018)
+
+for (i in seasons){
+
+advancedstats <- NBAPerGameAdvStatistics(season = i)
+pergamestats <- NBAPerGameStatistics(season = i)
+per100posstats <- NBAPerGameStatisticsPer100Poss(season = i)
+per36minstats <- NBAPerGameStatisticsPer36Min(season = i)
+
+datasets <- c('advancedstats', 'pergamestats', 'per100posstats', 'per36minstats')
+
+for (val in datasets){
+assign(paste0(val,i),eval(val))
+write.csv(eval(val), file = paste0(val,i,".csv"))
+}
+}
+
+```
+
